@@ -7,7 +7,6 @@ Created on Nov 25, 2011
 from ystockquote import get_historical_prices
 import numpy
 from matplotlib.mlab import PCA
-import 
 
 def get_data(quote, startdate, enddate):
     
@@ -24,8 +23,8 @@ def get_data(quote, startdate, enddate):
     
     # Now calc stats
     stats = []
-    stats.append(numpy.min(ror));
-    stats.append(numpy.max(ror));
+    stats.append(numpy.minimum(ror));
+    stats.append(numpy.maximum(ror));
     stats.append(numpy.mean(ror));
     stats.append(numpy.std(ror));
     stats.append(numpy.mean(vol));

@@ -4,36 +4,48 @@ Created on Dec 4, 2011
 @author: Eisen
 '''
 import numpy as np
-import pywt
+import pywt as wt
+
+def generator_return(toret):
+    return np.reshape(toret, (-1))
+def make_generator_executor(data, params):
+    return lambda fn: fn(data, params)
 
 def identity(data, params):
-    return data
+    return generator_return(data)
 
 def mean(data, params):
-    mdata = [np.mean(d) for d in data]
-    return np.array(mdata)
+    return generator_return(map(np.mean, data))
 
 def stdev(data, params):
-    stdata = [np.std(d) for d in data]
-    return np.array(stdata)
+    return generator_return(map(np.std, data))
 
-def max(data, params):
-    maxdata = [np.max(d) for d in data]
-    return np.array(maxdata)
 
-def min(data, params):
-    mindata = [np.min(d) for d in data]
-    return np.array(mindata)
+def maximum(data, params):
+    return generator_return(map(np.max, data))
+
+def minimum(data, params):
+    return generator_return(map(np.min, data))
 
 def dwt(data, params):
     dwtdata = []
-    if params['wavelet'] == '':
-        wavelet = 'db1'
+    if params.has_key('dwt:wavelet'):
+        wavelet = params['dwt:wavelet']
     else:
-        wavelet = params['wavelet']
+        wavelet = 'db1'
+        
     for d in data:
-        (approx, detail) = pywt.dwt(d, wavelet)
-        a = approx.reshape(approx.size)
-        b = detail.reshape(detail.size)
-        dwtdata += np.concatenate(a,b)
-    return np.array(dwtdata)
+        (approx, detail) = wt.dwt(d, wavelet)
+        a = approx.reshape((-1))
+        b = detail.reshape((-1))
+        dwtdata = np.concatenate((dwtdata,a,b))
+    return generator_return(dwtdata)
+
+def fft(data, params):
+    def next_fft_size(n):
+        return int(np.power(2, np.ceil(np.log2(n))))
+    
+    length = data.shape[1]
+    fftlen = next_fft_size(length)
+    fftdata = [np.fft.fft(d, fftlen) for d in data]
+    return generator_return(fftdata)
