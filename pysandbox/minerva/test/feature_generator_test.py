@@ -147,8 +147,15 @@ class FeatureGeneratorTestSuite(unittest.TestSuite):
     def __init__(self):
         unittest.TestSuite.__init__(self,map(FeatureGeneratorTestCase,
                                                      ("testGenerate",
+                                                      "testGeneratorScaling",
                                                       "testDwtGenerator",
                                                       "testFftGenerator"
                                                       "testSelect",
-                                                      "testSelectThreshold"
+                                                      "testSelectThreshold",
+                                                      "testApplication"
                                                       )))
+        
+        
+if __name__ == "__main__":
+    #import sys;sys.argv = ['', 'Test.testName']
+    unittest.main()
