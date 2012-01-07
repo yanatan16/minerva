@@ -6,10 +6,29 @@ Created on Dec 4, 2011
 import numpy as np
 import pywt as wt
 
+# Helper functions
 def generator_return(toret):
     return np.reshape(toret, (-1))
 def make_generator_executor(data, params):
     return lambda fn: fn(data, params)
+def get_generator_parameter(params, name, default):
+    if params.has_key(name):
+        return params[name]
+    else:
+        return default
+    
+
+## To make a generator follow this pattern:
+def my_new_generator(data, params):
+    # Check for a parameter
+    get_generator_parameter(params, "my_new_generator:my_param_name", 0xdefa017)
+    
+    # Perform operation
+    newdata = np.power(data, 2)
+    
+    # Return like so
+    return generator_return(newdata)
+    
 
 def identity(data, params):
     return generator_return(data)
@@ -19,7 +38,6 @@ def mean(data, params):
 
 def stdev(data, params):
     return generator_return(map(np.std, data))
-
 
 def maximum(data, params):
     return generator_return(map(np.max, data))
