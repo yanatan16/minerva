@@ -5,7 +5,7 @@ Created on Jan 6, 2012
 '''
 from svmutil import *
 import numpy as np
-from minerva.regression.regressor import SingleOutputExtensionRegressor, SingleOutputRegressor
+from regressor import SingleOutputExtensionRegressor, SingleOutputRegressor
 
 
 #############################
@@ -29,7 +29,7 @@ def libsvm_translate_params(inparams):
         tparams += "-" + parameter_translation[p] + " " + str(myparams[p]) + " "
     return tparams
 
-class svr(SingleOutputExtensionRegressor):
+class SupportVectorRegressor(SingleOutputExtensionRegressor):
     '''
     classdocs
     
@@ -62,7 +62,7 @@ class svr(SingleOutputExtensionRegressor):
         Construct a SVR-SingleOutputExtenstion Regressor
         '''
         constructor = lambda: svr_single(params)
-        super(svr,self).__init__(output_len, constructor)
+        super(SupportVectorRegressor,self).__init__(output_len, constructor)
 
     
 
@@ -116,6 +116,9 @@ class svr_single(SingleOutputRegressor):
         self.model = svm_train(problem, param)
     
     def regress(self, in_vecs):
+        if self.model == []:
+            raise "Must call train() before regress()"
+        
         y = [0.0] * len(in_vecs)
         if type(in_vecs) == type(np.array([])):
             in_vecs = in_vecs.tolist()
@@ -124,8 +127,8 @@ class svr_single(SingleOutputRegressor):
         if self.params.find(prob_parameter) == -1:
             prob_parameter = '-b 0'
             
-        out_tuple = svm_predict(y, in_vecs, self.model, prob_parameter)
-        return out_tuple[0]
+        out_prediction = svm_predict(y, in_vecs, self.model, prob_parameter)[0]
+        return out_prediction
     
     def prepareForSave(self, name):
         '''
