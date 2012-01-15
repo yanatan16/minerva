@@ -10,12 +10,7 @@ from pybrain.structure import FeedForwardNetwork, LinearLayer, SoftmaxLayer, Ful
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 import numpy as np
-
-def get_parameter(params, name, default):
-    if params.has_key(name):
-        return params[name]
-    else:
-        return default
+from minerva.utility import get_parameter
 
 class FeedforwardNeuralNetworkRegressor(Regressor):
     '''

@@ -141,21 +141,7 @@ class FeatureGeneratorTestCase(unittest.TestCase):
                         'apply_weights() doesnt keep first dimension constant on new data input'
         assert applied_rand.shape != applied_base.shape, 'New input data had no effect on return from apply_weights()' 
         
-
- 
-class FeatureGeneratorTestSuite(unittest.TestSuite):
-    def __init__(self):
-        unittest.TestSuite.__init__(self,map(FeatureGeneratorTestCase,
-                                                     ("testGenerate",
-                                                      "testGeneratorScaling",
-                                                      "testDwtGenerator",
-                                                      "testFftGenerator"
-                                                      "testSelect",
-                                                      "testSelectThreshold",
-                                                      "testApplication"
-                                                      )))
-        
         
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    import sys;sys.argv = ['', 'PyMinerva.FeatureGeneratorTest']
     unittest.main()
