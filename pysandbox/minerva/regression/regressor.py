@@ -20,7 +20,7 @@ class Regressor(object):
         '''
         pass
         
-    def train(self, input_vectors, expected_output_vectors):
+    def train(self, input_vectors, expected_output_vectors, params = dict()):
         '''
         Train trains the regressors to model the function represented by the input
         and output vectors.
@@ -37,7 +37,7 @@ class Regressor(object):
         Regress predicts input_vectors and returns predicted output_vectors as a numpy array.
         An optional second return values is probability of correctness (or sureness)
         
-        input_vectors: 2-d array of reals
+        input_vectors: 2-d array of reals. An array of input vectors
         returns: 2-d array of reals
     
         This method should be overloaded by an implementing regressor.
@@ -127,14 +127,14 @@ class SingleOutputExtensionRegressor(Regressor):
         for i in range(output_len):
             self.regressors.append(regressor_constructor())
         
-    def train(self, input_vectors, expected_output_vectors):
+    def train(self, input_vectors, expected_output_vectors, params = dict()):
         '''
         Train trains the regressors to model the function represented by the input
         and output vectors
         '''
         exp_out = np.array(expected_output_vectors)
         for i, r in enumerate(self.regressors):
-            r.train(input_vectors, exp_out[:,i])
+            r.train(input_vectors, exp_out[:,i], params)
     
     def regress(self, input_vectors):
         '''

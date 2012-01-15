@@ -57,11 +57,11 @@ class SupportVectorRegressor(SingleOutputExtensionRegressor):
     quiet : quiet mode (no outputs) (no value)
     '''
     
-    def __init__(self, output_len, params):
+    def __init__(self, output_len):
         '''
         Construct a SVR-SingleOutputExtenstion Regressor
         '''
-        constructor = lambda: svr_single(params)
+        constructor = lambda: svr_single()
         super(SupportVectorRegressor,self).__init__(output_len, constructor)
 
     
@@ -95,24 +95,16 @@ class svr_single(SingleOutputRegressor):
     n-fold_validation : n-fold cross validation mode
     quiet : quiet mode (no outputs) (no value)
     '''
-    params = [] # libsvm-formatted parameters
     model = [] # SVM model
-
-    def __init__(self, params):
-        '''
-        Constructor
-        '''
-        # Save translated parameters
-        self.params = libsvm_translate_params(params)
     
-    def train(self, in_vecs, exp_out_vals):
+    def train(self, in_vecs, exp_out_vals, params = dict()):
         if type(in_vecs) == type(np.array([])):
             in_vecs = in_vecs.tolist()
         if type(exp_out_vals) == type(np.array([])):
             exp_out_vals = exp_out_vals.tolist()
             
         problem = svm_problem(exp_out_vals, in_vecs)
-        param = svm_parameter(self.params)
+        param = svm_parameter(libsvm_translate_params(params))
         self.model = svm_train(problem, param)
     
     def regress(self, in_vecs):
@@ -123,9 +115,7 @@ class svr_single(SingleOutputRegressor):
         if type(in_vecs) == type(np.array([])):
             in_vecs = in_vecs.tolist()
             
-        prob_parameter = '-b 1'
-        if self.params.find(prob_parameter) == -1:
-            prob_parameter = '-b 0'
+        prob_parameter = '-b 0'
             
         out_prediction = svm_predict(y, in_vecs, self.model, prob_parameter)[0]
         return out_prediction

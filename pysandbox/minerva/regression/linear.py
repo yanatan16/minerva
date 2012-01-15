@@ -14,7 +14,7 @@ class LinearRegressor(Regressor):
     '''
     application_matrix = []
             
-    def train(self, input_vectors, expected_output_vectors):
+    def train(self, input_vectors, expected_output_vectors, params = dict()):
         '''
         Train the linear regressor by solving the system created by the
         input matrix and expected outputs

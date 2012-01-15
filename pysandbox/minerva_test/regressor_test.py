@@ -11,7 +11,7 @@ import numpy as np
 def generateOutputData(in_data, fncs):
     return np.transpose(map(lambda fn: map(fn, in_data), fncs))
 
-def testRegressor(regressor, inputData, outputFncs):
+def testRegressor(regressor, inputData, outputFncs, params = dict()):
     nInVecs = inputData.shape[0]
     nInFeatures = inputData.shape[1]
     nOutputs = len(outputFncs)
@@ -27,7 +27,7 @@ def testRegressor(regressor, inputData, outputFncs):
         
     #Test the regressor's training
     regressor.train(inputData,
-                   generateOutputData(inputData, outputFncs))
+                   generateOutputData(inputData, outputFncs), params)
     
     #Test the regressor's regression ability
     test_data = np.random.rand(nTestVecs, nInFeatures)
@@ -61,14 +61,12 @@ class RegressorTestCase(unittest.TestCase):
     def testSupportVectorRegressor(self):
         '''Test the Support Vector Regressor'''
         params = dict({"quiet": ''})
-        regressor = SupportVectorRegressor(len(self.fncs), params)
+        regressor = SupportVectorRegressor(len(self.fncs))
         input_data = np.random.rand(self.input_vecs, self.input_length)
         
         assert len(regressor.regressors) == len(self.fncs)
-        for regi in regressor.regressors:
-            assert type(regi.params) == type("")
         
-        testRegressor(regressor, input_data, self.fncs)
+        testRegressor(regressor, input_data, self.fncs, params)
         
     def testLinearRegressor(self):
         '''Test the Linear Regressor'''
