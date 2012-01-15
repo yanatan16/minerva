@@ -5,7 +5,7 @@ Created on Jan 7, 2012
 '''
 import unittest
 
-from minerva.regression import SupportVectorRegressor, LinearRegressor, saveRegressor, loadRegressor
+from minerva.regression import *
 import numpy as np 
 
 def generateOutputData(in_data, fncs):
@@ -74,6 +74,15 @@ class RegressorTestCase(unittest.TestCase):
         input_data = np.random.rand(self.input_vecs, self.input_length)
         
         testRegressor(regressor, input_data, self.fncs)
+        
+    def testFeedforwardNeuralNetworkRegressor(self):
+        '''Test the Feedforward Neural Network Regressor'''
+        regressor = FeedforwardNeuralNetworkRegressor()
+        input_data = np.random.rand(self.input_vecs, self.input_length)
+        
+        testRegressor(regressor, input_data, self.fncs)
+        
+        
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -6,7 +6,7 @@ Created on Jan 10, 2012
 TODO: Add more parameter options
 '''
 from regressor import Regressor
-from pybrain.structure import FeedForwardNetwork, LinearLayer, GaussianLayer, FullConnection
+from pybrain.structure import FeedForwardNetwork, LinearLayer, SoftmaxLayer, FullConnection
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 import numpy as np
@@ -17,7 +17,7 @@ def get_parameter(params, name, default):
     else:
         return default
 
-class FeedforwardNeuralNetwork(Regressor):
+class FeedforwardNeuralNetworkRegressor(Regressor):
     '''
     classdocs
     '''
@@ -52,7 +52,7 @@ class FeedforwardNeuralNetwork(Regressor):
         '''
         if self.ann == None:
             raise "Train must be called before Regress"
-        return map(self.ann.activate, input_vectors)
+        return np.array(map(self.ann.activate, input_vectors))
     
     def _constructNetwork(self, nIn, nOut, params):
         ''' Construct the network '''
@@ -68,10 +68,10 @@ class FeedforwardNeuralNetwork(Regressor):
         layers = []
         layers.append(LinearLayer(nIn))
         for nHid in hiddenSize:
-            layers.append(GaussianLayer(nHid))
+            layers.append(SoftmaxLayer(nHid))
         layers.append(LinearLayer(nOut))
-        ann.addOutputModule(layers[0])
-        ann.addInputModule(layers[-1])
+        ann.addOutputModule(layers[-1])
+        ann.addInputModule(layers[0])
         for mod in layers[1:-1]:
             ann.addModule(mod)
         
