@@ -5,15 +5,15 @@ Created on Dec 4, 2011
 '''
 
 import numpy as np
-import minerva.feature_generator as fgen
-import minerva.generators as gens
+from minerva.features import FeatureGenerator
+from minerva.features import generators as gens
 
 import unittest
 
 class FeatureGeneratorTestCase(unittest.TestCase):
     def setUp(self):
         data = np.random.rand(200,3,10)
-        self.fg = fgen.FeatureGenerator(data)
+        self.fg = FeatureGenerator(data)
         
     def testGenerate(self):
         '''Test the generation of features using the basic generators'''
