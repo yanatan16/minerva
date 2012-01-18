@@ -14,6 +14,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
     ninvest = 20
 
     def testOptimizeExecution(self):
+        '''Test MVPO execution'''
         corr_coeffs = 2 * np.random.rand(self.ninvest, self.ninvest) - 1
         mvpo = MeanVariancePortfolioOptimizer(corr_coeffs)
          
@@ -26,6 +27,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         assert close_enough(sum(new_alloc),1), "New allocations are not equal to 1"
         
     def testOptimizeInEasyLargeCase(self):
+        '''Test MVPO in an easy larger case'''
         cc = np.eye(self.ninvest)
         mvpo = MeanVariancePortfolioOptimizer(cc)
         
@@ -43,6 +45,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         assert ret > -.5, 'Return did not go up in toy case'
 
     def testOptimizeWithSmallRiskTolerance(self):
+        '''Test MVPO with small risk tolerance'''
         cc = np.eye(2)
         mvpo = MeanVariancePortfolioOptimizer(cc, risk_tolerance=0)
         
@@ -56,6 +59,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         assert close_enough(ret,0.01), 'Returns were not calculated correctly'
         
     def testOptimizeWithEqualChoices(self):
+        '''Test MVPO with equal choices'''
         cc = np.eye(2)
         mvpo = MeanVariancePortfolioOptimizer(cc)
         
@@ -69,6 +73,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         assert close_enough(ret,.1), 'Returns were not calculated correctly'
         
     def testOptimizeWithFullRiskTolerance(self):
+        '''Test MVPO with large risk tolerance'''
         cc = np.eye(2)
         mvpo = MeanVariancePortfolioOptimizer(cc, risk_tolerance=1000)
         
@@ -82,6 +87,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         assert close_enough(ret,.5), 'Returns were not calculated correctly'
 
     def testOptimizeWithShorting(self):
+        '''Test MVPO with shorting allowed'''
         cc = np.eye(self.ninvest)
         mvpo = MeanVariancePortfolioOptimizer(cc, allow_shorting=True, risk_tolerance=1)
         
@@ -97,8 +103,6 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         
         assert close_enough(sum(new_alloc),1), 'New allocations with shorting are not equal to 1'
         assert (np.array(new_alloc) < 0).any(), 'At least one of these allocations should be negative'
-        
-
 
 if __name__ == "__main__":
     import sys;sys.argv = ['', 'PyMinerva.MeanVariancePortfolioOptimizer']

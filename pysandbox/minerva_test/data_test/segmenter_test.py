@@ -10,6 +10,7 @@ import numpy as np
 class TimeSeriesSegmenterTestCase(unittest.TestCase):
 
     def testBasic(self):
+        '''Test the Time Series Segmenter basically'''
         data = np.random.rand(5,20)
         segment_parts = (3,2)
         train_data, valid_data = timeSeriesSegmenter(data, segment_parts)
@@ -22,6 +23,7 @@ class TimeSeriesSegmenterTestCase(unittest.TestCase):
         assert len(train_data[0][1]) == 2, 'The second segment array should be 2'
         
     def testOverlap(self):
+        '''Test the Time Series Segmenter overlap'''
         data = np.random.rand(5,20)
         segment_parts = (3,2)
         train_data, valid_data = timeSeriesSegmenter(data, 

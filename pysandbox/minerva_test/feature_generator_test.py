@@ -33,6 +33,7 @@ class FeatureGeneratorTestCase(unittest.TestCase):
         assert (self.fg.generated_features == expected_genfeat).all(), 'Generated features are not aligned correctly'
                     
     def testGenerateScaling(self):
+        '''Test feature scaling'''
         self.fg.generators = [gens.identity]
         self.fg.generator_params['scaling'] = False
         self.fg.datas = np.array([[np.arange(10),np.arange(10)-5]],dtype='float')
