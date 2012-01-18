@@ -29,36 +29,37 @@ def timeSeriesSegmenter(data,
     '''
     data = np.array(data)
     
-    nVectors = data.shape[1]
+    nVectors = data.shape[0]
     nSamples = data.shape[1]
     segment_length = np.sum(segment_parts)
     assert allowable_overlap < segment_length, 'Allowable overlap must not be as large as segment length.'
     
-    nSegments = np.ceil((nSamples - segment_length + 1.0) / (segment_length - allowable_overlap))
+    nSegments = int(np.ceil((nSamples - segment_length + 1.0) / (segment_length - allowable_overlap)))
     segment_starts = np.arange(nSegments) * (segment_length - allowable_overlap)
+    nTotal = nSegments * nVectors
     
-    nValidationSegments = np.floor(nSegments * validation_split)
-    nTrainingSegments = nSegments - nValidationSegments
+    nValidationSegments = int(np.floor(nTotal * validation_split))
+    nTrainingSegments = nTotal - nValidationSegments
     
     available_segments = [[[vec,start] for start in segment_starts] for vec in range(nVectors)]
-    available_segments = np.reshape(available_segments, (nVectors*nSegments,2))
+    available_segments = np.reshape(available_segments, (nTotal,2)).tolist()
     
     test_data_set = []
     validation_data_set = []
     
     def selectData(vec,start):
-        out = ()
+        out = []
         for seglen in segment_parts:
-            out.append(data[vec,start:start+seglen])
+            out.append(data[vec,start:(start+seglen)])
             start += seglen
         return out
     
-    for unused_i in range(nTrainingSegments):
+    for unused_i in np.arange(nTrainingSegments):
         selection = np.random.randint(len(available_segments))
         segment = available_segments.pop(selection)
         test_data_set.append(selectData(segment[0], segment[1]))
         
-    for unused_i in range(nValidationSegments):
+    for unused_i in np.arange(nValidationSegments):
         selection = np.random.randint(len(available_segments))
         segment = available_segments.pop(selection)
         validation_data_set.append(selectData(segment[0], segment[1]))
