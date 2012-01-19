@@ -3,8 +3,9 @@ Created on Jan 6, 2012
 
 @author: jon
 '''
+from base_experiment import BaseExperiment
 
-class RegressionExperiment(object):
+class RegressionExperiment(BaseExperiment):
     '''
     classdocs
     '''
