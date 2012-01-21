@@ -10,7 +10,6 @@ from pybrain.structure import FeedForwardNetwork, LinearLayer, SoftmaxLayer, Ful
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 import numpy as np
-from minerva.utility import get_parameter
 
 class FeedforwardNeuralNetworkRegressor(Regressor):
     '''
@@ -51,11 +50,11 @@ class FeedforwardNeuralNetworkRegressor(Regressor):
     
     def _constructNetwork(self, nIn, nOut, params):
         ''' Construct the network '''
-        nHidden = get_parameter(params, 'nHidden', 2)
+        nHidden = params.setdefault('nHidden', 2)
         hiddenSize = np.empty(nHidden)
         for i in range(nHidden):
             pstr = 'hiddenSize[' + str(i) + ']'
-            hiddenSize[i] = get_parameter(params, pstr, nIn + nOut)
+            hiddenSize[i] = params.setdefault(pstr, nIn + nOut)
         # Construct network
         ann = FeedForwardNetwork()
         

@@ -5,7 +5,6 @@ Created on Dec 4, 2011
 '''
 import numpy as np
 import pywt as wt
-from minerva.utility import get_parameter
 
 # Helper functions
 def generator_return(toret):
@@ -14,7 +13,7 @@ def generator_return(toret):
 ## To make a generator follow this pattern:
 def my_new_generator(data, params):
     # Check for a parameter
-    get_parameter(params, "my_new_generator:my_param_name", 0xdefa017)
+    params.setdefault("mygen:param_name", 0xdefa017)
     
     # Perform operation
     newdata = np.power(data, 2)
@@ -40,10 +39,7 @@ def minimum(data, params):
 
 def dwt(data, params):
     dwtdata = []
-    if params.has_key('dwt:wavelet'):
-        wavelet = params['dwt:wavelet']
-    else:
-        wavelet = 'db1'
+    wavelet = params.setdefault('dwt:wavelet','db1')
         
     for d in data:
         (approx, detail) = wt.dwt(d, wavelet)
