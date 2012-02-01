@@ -23,10 +23,9 @@ class BaseExperiment(object):
             
         Returns an array of output values corresponding to the experimental inputs
         '''
+        assert len(experimental_values) <= 2, 'Can only test up to two variables at once.'
         if experimental_values == None:
-            self.run(self.experimental_values)
-        else:
-            self.run(experimental_values)
+            experimental_values = self.experimental_values
             
         if runner == None:
             runner = self.run_single;

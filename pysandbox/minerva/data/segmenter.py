@@ -64,4 +64,5 @@ def timeSeriesSegmenter(data,
         segment = available_segments.pop(selection)
         validation_data_set.append(selectData(segment[0], segment[1]))
     
-    return test_data_set, validation_data_set
+    return np.array(test_data_set), np.array(validation_data_set)
+

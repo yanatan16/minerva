@@ -57,7 +57,7 @@ class SupportVectorRegressor(SingleOutputExtensionRegressor):
     quiet : quiet mode (no outputs) (no value)
     '''
     
-    def __init__(self, output_len):
+    def __init__(self, output_len, *unused_args):
         '''
         Construct a SVR-SingleOutputExtenstion Regressor
         '''

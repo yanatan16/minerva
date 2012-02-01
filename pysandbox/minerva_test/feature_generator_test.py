@@ -118,7 +118,7 @@ class FeatureGeneratorTestCase(unittest.TestCase):
         n5 = len(self.fg.selected_fracs)
         sum5 = sum(self.fg.selected_fracs)
         assert n5 <= n01, 'Threshold has no effect on select()'
-        assert sum5 < .5, 'Threshold does not bound eigenvalues correctly'
+        assert sum5 < .75, 'Threshold does not bound eigenvalues correctly'
         
     def testApplication(self):
         '''Test the application of the generated weights on data'''

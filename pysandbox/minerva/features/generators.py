@@ -22,22 +22,22 @@ def my_new_generator(data, params):
     return generator_return(newdata)
     
 
-def identity(data, params):
+def identity(data, params = dict()):
     return generator_return(data)
 
-def mean(data, params):
+def mean(data, params = dict()):
     return generator_return(map(np.mean, data))
 
-def stdev(data, params):
+def stdev(data, params = dict()):
     return generator_return(map(np.std, data))
 
-def maximum(data, params):
+def maximum(data, params = dict()):
     return generator_return(map(np.max, data))
 
-def minimum(data, params):
+def minimum(data, params = dict()):
     return generator_return(map(np.min, data))
 
-def dwt(data, params):
+def dwt(data, params = dict()):
     dwtdata = []
     wavelet = params.setdefault('dwt:wavelet','db1')
         
@@ -48,7 +48,7 @@ def dwt(data, params):
         dwtdata = np.concatenate((dwtdata,a,b))
     return generator_return(dwtdata)
 
-def fft(data, params):
+def fft(data, params = dict()):
     def next_fft_size(n):
         return int(np.power(2, np.ceil(np.log2(n))))
     

@@ -34,7 +34,7 @@ class FeatureGenerator(object):
         self.generators = generators
         self.generator_params = gen_params
         
-    def generate_helper(self, datas):
+    def _generate_helper(self, datas):
         '''Perform feature scaling and generation step on arbitrary data'''
         def generate_features(obs):
             gexec = make_generator_executor(obs, self.generator_params)
@@ -47,8 +47,8 @@ class FeatureGenerator(object):
         return np.array(map(generate_features, 
                             map(apply_scaling, datas)))
         
-    def generate_scaling(self):
-        '''Generate scaling parameters for generate_helper'''
+    def _generate_scaling(self):
+        '''Generate scaling parameters for _generate_helper'''
         slen = self.datas.shape[1]
         self.scaling = np.empty((2,slen))
         if (self.generator_params.has_key('scaling') and \
@@ -79,38 +79,37 @@ class FeatureGenerator(object):
         '''
         Generate scaling and features with current generators
         '''
-        self.generate_scaling()
-        self.generated_features = self.generate_helper(self.datas)
+        self._generate_scaling()
+        self.generated_features = self._generate_helper(self.datas)
         
     def select(self, threshold = 0.1):
         '''
         Select final features from generated ones using PCA.
         '''       
-        if len(self.generated_features) == 0:
-            raise Exception('Must call generate() before select()')
+        assert len(self.generated_features) > 0, 'Must call generate() before select()'
         pca = PCA(self.generated_features)
-        count = sum(pca.fracs.cumsum() < (1-threshold))
+        count = sum(pca.fracs.cumsum() < (1-threshold)) + 1
         self.selected_fracs = pca.fracs[0:count]
         self.selected_weights = pca.Wt[0:count, :]
         return self.selected_fracs
     
     def process(self, threshold = 0.1):
+        '''Perform generate, select, and application all in one call.'''
         self.generate()
         self.select(threshold)
-        return self.apply()
+        return self.apply_weights()
     
     def apply_weights(self, data = []):
         '''
         Apply the computed weights process to arbitrary data
         If data is not included, this will apply to data used to generate weights
         '''     
-        if len(self.selected_weights) == 0:
-            raise Exception("Must call select() before applicator()")
+        assert len(self.selected_weights) > 0, "Must call select() before applicator()"
         
         if (data == []):
             gen_feat = self.generated_features
         else:
-            gen_feat = self.generate_helper(data)
+            gen_feat = self._generate_helper(data)
         weights = np.matrix(self.selected_weights)
         
         sel_feat = np.array(map(lambda obs: np.array(weights * np.matrix(obs).T)[:,0], gen_feat))

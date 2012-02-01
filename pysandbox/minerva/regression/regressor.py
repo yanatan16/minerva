@@ -14,7 +14,7 @@ class Regressor(object):
     n-dimensional real data to m-dimensional real data.
     '''
     
-    def __init__(self):
+    def __init__(self, *unused_args):
         '''
         Constructor
         '''
@@ -54,7 +54,9 @@ class Regressor(object):
         returns: tuple of mean error, mean squared error, and standard deviation of error
         '''
         actual = self.regress(test_input_vectors)
-        test = (actual - test_output_vectors) / test_output_vectors
+        np.seterr(invalid='raise')
+        test = np.divide((actual - test_output_vectors), test_output_vectors)
+        test = np.zeros(test.shape) + (test != np.nan) * test
         return (np.mean(test), np.mean(test**2), np.std(test))
     
     def prepareForSave(self, name):
@@ -79,13 +81,13 @@ class SingleOutputRegressor(Regressor):
     n-dimensional real data to 1-dimensional real data.
     '''
     
-    def __init__(self):
+    def __init__(self, *unused_args):
         '''
         Constructor
         '''
         pass
         
-    def train(self, input_vectors, expected_output_values):
+    def train(self, input_vectors, expected_output_values, params = dict()):
         '''
         Train trains the regressors to model the function represented by the input
         and output vectors.
@@ -122,10 +124,8 @@ class SingleOutputExtensionRegressor(Regressor):
         '''
         Constructor
         '''
-        # Construct the implementation with params
-        self.regressors = []
-        for i in range(output_len):
-            self.regressors.append(regressor_constructor())
+        # Construct the single implementation
+        self.regressors = map(lambda x: regressor_constructor(), range(output_len));
         
     def train(self, input_vectors, expected_output_vectors, params = dict()):
         '''
