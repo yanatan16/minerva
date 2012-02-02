@@ -67,7 +67,7 @@ class RegressionExperiment(BaseExperiment):
             graph = False
         
         return super(RegressionExperiment, self).run(
-                 variables_under_test.values(), runner, graph)
+                 runner, variables_under_test.values(), graph)
 
     
     def _base_runner(self, runvars):

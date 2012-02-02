@@ -6,12 +6,15 @@ Created on Jan 17, 2012
 import numpy as np
 from minerva.graphing import plot_scatter, plot_image
 
+def none_runner(a=None,b=None):
+    return None
+
 class BaseExperiment(object):
     '''
     classdocs
     '''
     
-    def run(self, experimental_values=None, runner=None, graph=True):
+    def run(self, runner=None, experimental_values=None, graph=True):
         '''
         Run the experiment with a 1, 2, or 3 independent variables and graph it at the end
         
@@ -23,14 +26,16 @@ class BaseExperiment(object):
             
         Returns an array of output values corresponding to the experimental inputs
         '''
-        assert len(experimental_values) <= 2, 'Can only test up to two variables at once.'
-        if experimental_values == None:
-            experimental_values = self.experimental_values
+        if experimental_values == None or experimental_values == []:
+            ndim = 0
+        elif type(experimental_values) == list or type(experimental_values) == np.ndarray:
+            ndim = 1
+            experimental_values = (experimental_values,)
+        elif type(experimental_values) == tuple:
+            ndim = len(experimental_values)
             
-        if runner == None:
-            runner = self.run_single;
+        assert ndim <= 2, 'Can only experiment with two independent variables at this time.'
             
-        ndim = len(experimental_values)
         if ndim == 0:
             output = runner()
             # Don't graph single output
@@ -39,9 +44,9 @@ class BaseExperiment(object):
             if graph:
                 self._graph(experimental_values[0], output)
         elif ndim == 2:
-            output = [[runner(ev1, ev2) 
-                       for ev1 in experimental_values[0]] 
-                      for ev2 in experimental_values[1]]
+            output = [[runner(e1,e2) 
+                       for e1 in experimental_values[0]]
+                      for e2 in experimental_values[1]]
             if graph:
                 self._graph(experimental_values, output)
         

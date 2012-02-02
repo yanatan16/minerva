@@ -12,5 +12,5 @@ from data_test.alltests import *
 from experiment_test.alltests import *
         
 if __name__ == "__main__":
-    import sys;sys.argv = ['', 'PyMinerva.AllTests']
+    #import sys;sys.argv = ['', 'PyMinerva.AllTests']
     unittest.main()
