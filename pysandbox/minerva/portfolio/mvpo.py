@@ -3,9 +3,12 @@ Created on Jan 15, 2012
 
 @author: Jon Eisen
 '''
-from portfolio_optimizer import PortfolioOptimizer
+from portfolio_optimizer import PortfolioOptimizer, OptimizationException
 import numpy as np
 from scipy.optimize import fmin_slsqp
+
+class OptimizationException(Exception):
+    pass
 
 class MeanVariancePortfolioOptimizer(PortfolioOptimizer):
     '''
@@ -90,9 +93,9 @@ class MeanVariancePortfolioOptimizer(PortfolioOptimizer):
                         fprime_eqcons=Cp, 
                         full_output=True, 
                         iprint=verb);
-                        
+                       
         if (imode != 0):
-            raise Exception('Error in optimization: ' + smode)
+            raise OptimizationException('Error in optimization: ' + smode)
 
         #We have the new weights. Calculate the mean and variance
         return wf, Var(wf), Ret(wf)

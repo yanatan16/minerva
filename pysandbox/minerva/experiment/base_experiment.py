@@ -28,10 +28,7 @@ class BaseExperiment(object):
         '''
         if experimental_values == None or experimental_values == []:
             ndim = 0
-        elif type(experimental_values) == list or type(experimental_values) == np.ndarray:
-            ndim = 1
-            experimental_values = (experimental_values,)
-        elif type(experimental_values) == tuple:
+        else:
             ndim = len(experimental_values)
             
         assert ndim <= 2, 'Can only experiment with two independent variables at this time.'

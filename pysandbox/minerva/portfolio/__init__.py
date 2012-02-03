@@ -1,1 +1,2 @@
 from mvpo import MeanVariancePortfolioOptimizer
+from portfolio_optimizer import OptimizationException

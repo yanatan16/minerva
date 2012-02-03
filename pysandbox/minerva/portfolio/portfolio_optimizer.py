@@ -4,6 +4,13 @@ Created on Jan 8, 2012
 @author: Jon Eisen
 '''
 
+class OptimizationException(Exception):
+    def __init__(self, reason):
+        self.str = reason
+    def __str__(self):
+        return self.str
+        
+
 class PortfolioOptimizer(object):
     '''
     classdocs
