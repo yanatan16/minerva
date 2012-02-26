@@ -39,9 +39,11 @@ class RegressionExperiment(BaseExperiment):
       
     def run(self, 
             data_set, 
-            graph=True,            
+            graph=True, 
+            disp=True,           
             variables_under_test = dict(), # These values can be tested
-            static_variables = dict()):
+            static_variables = dict(),
+            repeats = 0):
         '''
         Test a regression algorithm. Tests an arbitrary input to a
         regressor or feature generator. Graphs and returns output.
@@ -65,9 +67,14 @@ class RegressionExperiment(BaseExperiment):
         if nTest == 0:
             # Not testing any variable, just running
             graph = False
+            
+        if graph:
+            self.xlabel = variables_under_test.keys()[0]
+        if graph and nTest == 2:
+            self.ylabel = variables_under_test.keys()[1]
         
         return super(RegressionExperiment, self).run(
-                 runner, variables_under_test.values(), graph)
+                 runner, variables_under_test.values(), graph, disp, repeats)
 
     
     def _base_runner(self, runvars):

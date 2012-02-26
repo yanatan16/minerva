@@ -32,6 +32,16 @@ class TimeSeriesSegmenterTestCase(unittest.TestCase):
         assert len(valid_data) == 0, 'Validation Data should be empty because split is 0'
         assert len(train_data) == 30, 'Overlap wasn\'t calculated correctly'
         
+    def testNonAlignedArray(self):
+        '''Test the segmenter using an unaligned array'''
+        data = np.array(map(np.random.rand,(20,23,15)))
+        segment_parts = (3,2)
+        train_data, valid_data = timeSeriesSegmenter(data, segment_parts)
+        
+        assert len(valid_data) > 0, 'Validation Data shouldn\'t be empty'
+        assert len(train_data) > 0, 'Training data shouldn\'t be empty'
+        
+        
 if __name__ == "__main__":
     import sys;sys.argv = ['', 'PyMinerva.TimeSeriesSegmenter']
     unittest.main()

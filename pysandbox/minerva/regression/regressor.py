@@ -55,9 +55,9 @@ class Regressor(object):
         '''
         actual = self.regress(test_input_vectors)
         np.seterr(invalid='raise')
-        test = np.divide((actual - test_output_vectors), test_output_vectors)
-        test = np.zeros(test.shape) + (test != np.nan) * test
-        return (np.mean(test), np.mean(test**2), np.std(test))
+        test = np.abs(actual - test_output_vectors)
+        exp_mean = np.mean(test_output_vectors)
+        return (np.mean(test)/exp_mean, np.mean(test**2)/exp_mean**2, np.std(test)/np.std(test_output_vectors))
     
     def prepareForSave(self, name):
         '''

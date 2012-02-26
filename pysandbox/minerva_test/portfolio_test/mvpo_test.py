@@ -12,10 +12,11 @@ from minerva.utility import close_enough
 class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
     
     ninvest = 20
-
-    def optimizeExecution(self):
+    
+    def testOptimizeExecution(self):
         '''Test MVPO execution'''
-        corr_coeffs = np.random.randn(self.ninvest, self.ninvest)
+        x = np.matrix(np.random.randn(self.ninvest))
+        corr_coeffs = x.T * x;
         mvpo = MeanVariancePortfolioOptimizer(corr_coeffs)
          
         current_alloc = np.arange(self.ninvest,dtype=np.float64) / np.arange(self.ninvest).sum()
@@ -24,20 +25,6 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
         predicted_stats[:,1] = abs(predicted_stats[:,1]) * 3
         new_alloc, unused_var, unused_ret = mvpo.optimize(current_alloc, predicted_stats)
         assert close_enough(sum(new_alloc),1), "New allocations are not equal to 1"
-        return True
-    
-    def testOptimizeExecution(self):
-        # Run n times to make sure it works
-        max_runs = 3
-        success = False
-        counter = 0
-        while success == False and counter < max_runs:
-            try:
-                success = self.optimizeExecution()
-            except OptimizationException:
-                pass
-        
-        assert success, 'Optimize did not converge after ' + str(max_runs) + 'runs. This may be random.'
         
     def testOptimizeInEasyLargeCase(self):
         '''Test MVPO in an easy larger case'''

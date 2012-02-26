@@ -30,19 +30,24 @@ def timeSeriesSegmenter(data,
     data = np.array(data)
     
     nVectors = data.shape[0]
-    nSamples = data.shape[1]
+    nSamples = np.array(map(len, data))
     segment_length = np.sum(segment_parts)
     assert allowable_overlap < segment_length, 'Allowable overlap must not be as large as segment length.'
     
-    nSegments = int(np.ceil((nSamples - segment_length + 1.0) / (segment_length - allowable_overlap)))
-    segment_starts = np.arange(nSegments) * (segment_length - allowable_overlap)
-    nTotal = nSegments * nVectors
+    nSegments = np.array(np.ceil((nSamples - segment_length + 1.0) / (segment_length - allowable_overlap)), dtype=np.int64)
+    segment_starts = np.array(map(lambda x: np.arange(x) * (segment_length - allowable_overlap),nSegments))
+    nTotal = np.sum(nSegments)
     
     nValidationSegments = int(np.floor(nTotal * validation_split))
     nTrainingSegments = nTotal - nValidationSegments
     
-    available_segments = [[[vec,start] for start in segment_starts] for vec in range(nVectors)]
-    available_segments = np.reshape(available_segments, (nTotal,2)).tolist()
+    unflattened_available_segments = [[[vec,start] for start in segment_starts[vec]] for vec in range(nVectors)]
+    available_segments = np.empty((nTotal,2), dtype=int)
+    counter = 0
+    for avail_segs_vec in unflattened_available_segments:
+        available_segments[counter:len(avail_segs_vec)+counter,:] = avail_segs_vec
+        counter += len(avail_segs_vec);
+    available_segments = available_segments.tolist()
     
     test_data_set = []
     validation_data_set = []
@@ -50,7 +55,7 @@ def timeSeriesSegmenter(data,
     def selectData(vec,start):
         out = []
         for seglen in segment_parts:
-            out.append(data[vec,start:(start+seglen)])
+            out.append(data[vec][start:(start+seglen)])
             start += seglen
         return out
     

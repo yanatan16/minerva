@@ -25,8 +25,8 @@ def plot_image(x, y, z):
     
 def plot_scatter(x, y, 
                  title='Scatter Plot',
-                 xlabel='Y value',
-                 ylabel='X value'):
+                 xlabel='X value',
+                 ylabel='Y value'):
     """
     Plot a scatter plot
     """
