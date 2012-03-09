@@ -20,7 +20,6 @@ def my_new_generator(data, params):
     
     # Return like so
     return generator_return(newdata)
-    
 
 def identity(data, params = dict()):
     return generator_return(data)

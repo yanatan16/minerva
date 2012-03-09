@@ -5,9 +5,7 @@ Created on Dec 4, 2011
 '''
 import numpy as np
 from matplotlib.mlab import PCA
-
-def make_generator_executor(data, params):
-    return lambda fn: fn(data, params)
+from types import FunctionType, ListType
 
 class FeatureGenerator(object):
     '''
@@ -33,47 +31,6 @@ class FeatureGenerator(object):
         self.datas = np.array(datas, dtype='float')
         self.generators = generators
         self.generator_params = gen_params
-        
-    def _generate_helper(self, datas):
-        '''Perform feature scaling and generation step on arbitrary data'''
-        def generate_features(obs):
-            gexec = make_generator_executor(obs, self.generator_params)
-            return np.concatenate(map(gexec, self.generators))
-        def apply_scaling(obs):
-            for i in range(len(obs)):
-                obs[i] = map(lambda x: self.scaling[0][i] * (x + self.scaling[1][i]), obs[i])
-            return obs
-            
-        return np.array(map(generate_features, 
-                            map(apply_scaling, datas)))
-        
-    def _generate_scaling(self):
-        '''Generate scaling parameters for _generate_helper'''
-        slen = self.datas.shape[1]
-        self.scaling = np.empty((2,slen))
-        if (self.generator_params.has_key('scaling') and \
-                self.generator_params['scaling']):  
-            for i in range(slen):
-                data = np.array(self.datas[:,i,:])
-                
-                minimum = np.min(data)
-                isneg = minimum < 0
-                # If the data is negative, use a -1 to 1 instead of 0 to 1 interval
-                if isneg:
-                    median = np.median(data)
-                    self.scaling[1][i] = -median
-                else:
-                    self.scaling[1][i] = -minimum
-                    
-                absmax = np.max(np.abs(data + self.scaling[1][i]))
-                self.scaling[0][i] = 1.0 / absmax
-                
-                
-        else:
-            # unscaled
-            self.scaling[0] = np.ones((slen))
-            self.scaling[1] = np.zeros((slen))
-            
         
     def generate(self):
         '''
@@ -114,3 +71,59 @@ class FeatureGenerator(object):
         
         sel_feat = np.array(map(lambda obs: np.array(weights * np.matrix(obs).T)[:,0], gen_feat))
         return sel_feat
+        
+    def _make_generator_executor(self, data, params):
+        return lambda fn: fn(data, params)
+    
+    def _generate_helper_features(self, obs):
+        '''Generate features for a given observation'''
+        assert len(self.generators) > 0, "No generators have been selected!"
+        if len(np.shape(self.generators)) == 1 and type(self.generators[0]) == FunctionType:
+            gexec = self._make_generator_executor(obs, self.generator_params)
+            return np.concatenate(map(gexec, self.generators))
+        else:
+            assert len(obs) == len(self.generators), 'Generators must have first dimension length equal to number of data types'
+            assert type(self.generators[0]) == ListType, 'Generators must be a 1 or 2 dimension list of functions'
+            features = []
+            for o, gs in zip(obs,self.generators):
+                if len(gs) > 0:
+                    gexec = self._make_generator_executor([o], self.generator_params)
+                    features += np.concatenate(map(gexec, gs)).tolist()
+            return np.array(features)
+        
+    def _generate_helper_apply_scaling(self,obs):
+        '''Apply scaling to a given observation'''
+        for i in range(len(obs)):
+            obs[i] = map(lambda x: self.scaling[0][i] * (x + self.scaling[1][i]), obs[i])
+        return obs
+        
+    def _generate_helper(self, datas):
+        '''Perform feature scaling and generation step on arbitrary data'''
+        return np.array(map(self._generate_helper_features, 
+                            map(self._generate_helper_apply_scaling, datas)))
+        
+    def _generate_scaling(self):
+        '''Generate scaling parameters for _generate_helper'''
+        slen = self.datas.shape[1]
+        self.scaling = np.empty((2,slen))
+        if (self.generator_params.has_key('scaling') and \
+                self.generator_params['scaling']):  
+            for i in range(slen):
+                data = np.array(self.datas[:,i,:])
+                
+                minimum = np.min(data)
+                isneg = minimum < 0
+                # If the data is negative, use a -1 to 1 instead of 0 to 1 interval
+                if isneg:
+                    median = np.median(data)
+                    self.scaling[1][i] = -median
+                else:
+                    self.scaling[1][i] = -minimum
+                    
+                absmax = np.max(np.abs(data + self.scaling[1][i]))
+                self.scaling[0][i] = 1.0 / absmax
+        else:
+            # unscaled
+            self.scaling[0] = np.ones((slen))
+            self.scaling[1] = np.zeros((slen))
+            

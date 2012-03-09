@@ -9,7 +9,8 @@ import numpy as np
 def timeSeriesSegmenter(data, 
              segment_parts,
              allowable_overlap=0,
-             validation_split=0.25):
+             validation_split=0.25,
+             segment_overlap=0):
     '''
     A class for handling the extraction of meaningful individual data segments
     from a set of time series data.
@@ -29,11 +30,32 @@ def timeSeriesSegmenter(data,
     '''
     data = np.array(data)
     
-    nVectors = data.shape[0]
-    nSamples = np.array(map(len, data))
+    oned = False;
+    twod = False;
+    
+    nVectors = len(data) 
+    nSamples = np.empty(nVectors)
+    for i, v in enumerate(data):
+        s = np.shape(v)
+        if len(s) == 1 and type(v[0]) != np.ndarray:
+            oned = True;
+            assert not twod, 'Cannot mix 1-dimension and 2-dimension data';
+            nSamples[i] = len(v)
+        elif len(s) == 2:
+            twod = True;
+            assert not oned, 'Cannot mix 1-dimension and 2-dimension data';
+            nSamples[i] = s[1]
+        elif len(s) == 1 and type(v[0]) == np.ndarray:
+            twod = True;
+            assert not oned, 'Cannot mix 1-dimension and 2-dimension data';
+            assert np.all([len(x)==len(v[0]) for x in v]), 'Multi-dim data must still have same lowest dimension for the whole low matrix'
+            nSamples[i] = len(v[0])
+        else:
+            assert False, 'Can only accept a vector of 2 dimensional data (3d).'
+            
     segment_length = np.sum(segment_parts)
     assert allowable_overlap < segment_length, 'Allowable overlap must not be as large as segment length.'
-    
+            
     nSegments = np.array(np.ceil((nSamples - segment_length + 1.0) / (segment_length - allowable_overlap)), dtype=np.int64)
     segment_starts = np.array(map(lambda x: np.arange(x) * (segment_length - allowable_overlap),nSegments))
     nTotal = np.sum(nSegments)
@@ -52,13 +74,21 @@ def timeSeriesSegmenter(data,
     test_data_set = []
     validation_data_set = []
     
-    def selectData(vec,start):
-        out = []
-        for seglen in segment_parts:
-            out.append(data[vec][start:(start+seglen)])
-            start += seglen
-        return out
-    
+    if oned:
+        def selectData(vec,start):
+            out = []
+            for seglen in segment_parts:
+                out.append(data[vec][start:(start+seglen)])
+                start += seglen - segment_overlap
+            return out
+    else:
+        def selectData(vec,start):
+            out = []
+            for seglen in segment_parts:
+                out.append([v[start:(start+seglen)] for v in data[vec]])
+                start += seglen - segment_overlap
+            return out
+        
     for unused_i in np.arange(nTrainingSegments):
         selection = np.random.randint(len(available_segments))
         segment = available_segments.pop(selection)

@@ -7,9 +7,6 @@ from portfolio_optimizer import PortfolioOptimizer, OptimizationException
 import numpy as np
 from scipy.optimize import fmin_slsqp
 
-class OptimizationException(Exception):
-    pass
-
 class MeanVariancePortfolioOptimizer(PortfolioOptimizer):
     '''
     classdocs

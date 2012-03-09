@@ -6,7 +6,7 @@ Created on Jan 15, 2012
 
 import unittest
 from regressor_test import RegressorTestCase
-from feature_generator_test import FeatureGeneratorTestCase
+from feature_generator_test.alltests import *
 from portfolio_test.alltests import *
 from data_test.alltests import *
 from experiment_test.alltests import *
