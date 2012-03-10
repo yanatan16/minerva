@@ -11,7 +11,7 @@ from minerva.utility import close_enough
 
 class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
     
-    ninvest = 20
+    ninvest = 10
     
     def testOptimizeExecution(self):
         '''Test MVPO execution'''
