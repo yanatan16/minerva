@@ -97,7 +97,6 @@ class RegressionExperimentTest(unittest.TestCase):
         '''Run a two-dimensional experiment with repeats'''
         self.testTwoDimExperiment(2)
         
-#TODO add more
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

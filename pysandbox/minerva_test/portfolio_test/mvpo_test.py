@@ -15,7 +15,7 @@ class MeanVariancePortfolioOptimizerTestCase(unittest.TestCase):
     
     def testOptimizeExecution(self):
         '''Test MVPO execution'''
-        x = np.matrix(np.random.randn(self.ninvest))
+        x = np.matrix(np.random.randn(self.ninvest) / 3)
         corr_coeffs = x.T * x;
         mvpo = MeanVariancePortfolioOptimizer(corr_coeffs)
          
