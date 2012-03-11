@@ -28,7 +28,7 @@ class FeatureGenerator(object):
         '''
         Constructor
         '''
-        self.datas = np.array(datas, dtype='float')
+        self.datas = np.array(datas)
         self.generators = generators
         self.generator_params = gen_params
         

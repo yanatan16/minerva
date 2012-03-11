@@ -4,7 +4,7 @@ Created on Jan 6, 2012
 @author: Jon Eisen
 '''
 from base_experiment import BaseExperiment
-from minerva.data import timeSeriesSegmenter
+from minerva.data import makeDataNormalizer, timeSeriesSegmenter
 from minerva.regression import LinearRegressor
 from minerva.features import FeatureGenerator
 from minerva.features import generators as gens
@@ -22,6 +22,8 @@ class RegressionExperiment(BaseExperiment):
     default_test_variables = dict({
         # Functions on an array to predict (outputs of regression)
         'output_fncs':             [np.mean, np.std],
+        
+        'data_mapping':            makeDataNormalizer(),
                                    
         'seg:predictor_length':    30,
         'seg:predictee_length':    5,
@@ -78,8 +80,7 @@ class RegressionExperiment(BaseExperiment):
 
     
     def _base_runner(self, runvars):
-        ''' A            ctually run a test will all variables having single values 
-        
+        ''' 
         To run a case:
         - Segment the test data into training and validation
         - Extract the input data
@@ -89,20 +90,34 @@ class RegressionExperiment(BaseExperiment):
         - Evaluate the regressor
         '''
         
+        #TODO Change to an arbitrary mapping
+        if runvars['data_mapping'] is not None:
+            data = np.array([runvars['data_mapping'](d) for d in runvars['data']])
+        else:
+            data = np.array(runvars['data'])
+        
         # Segment the test data
         train_data, test_data = timeSeriesSegmenter(
-            runvars['data'],
+            data,
             (runvars['seg:predictor_length'], runvars['seg:predictee_length']),
             allowable_overlap=runvars['seg:allowable_overlap'],
             validation_split=runvars['seg:validation_split'])
         
         # Extract the input data
-        train_data_input = np.array([[d[0]] for d in train_data])
-        test_data_input = np.array([[d[0]] for d in test_data])
-        
         # Calculate the expected output data of this input data
-        train_data_output = np.array([[fn([d[1]]) for fn in runvars['output_fncs']] for d in train_data])
-        test_data_output = np.array([[fn([d[1]]) for fn in runvars['output_fncs']] for d in test_data])
+        if type(train_data[0][0][0]) == np.float64:
+            train_data_input = np.array(np.array([[d[0]] for d in train_data]).tolist())
+            test_data_input = np.array(np.array([[d[0]] for d in test_data]).tolist())
+        
+            train_data_output = np.array(np.array([[fn([d[1]]) for fn in runvars['output_fncs']] for d in train_data]).tolist())
+            test_data_output = np.array(np.array([[fn([d[1]]) for fn in runvars['output_fncs']] for d in test_data]).tolist())
+        else:
+            train_data_input = np.array(np.array([d[0] for d in train_data]).tolist())
+            test_data_input = np.array(np.array([d[0] for d in test_data]).tolist())
+        
+            train_data_output = np.array(np.array([[fn(d[1]) for fn in runvars['output_fncs']] for d in train_data]).tolist())
+            test_data_output = np.array(np.array([[fn(d[1]) for fn in runvars['output_fncs']] for d in test_data]).tolist())
+            
         
         # Generate features
         fg = FeatureGenerator(train_data_input,

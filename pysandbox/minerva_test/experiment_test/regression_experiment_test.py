@@ -8,32 +8,29 @@ import numpy as np
 from minerva.experiment import RegressionExperiment
 from minerva.features import generators as gens
 from minerva.regression import *
+from minerva.utility import RandomWalk
 
-def createTimeSeriesData(nObs, nSamp):
-    starting_vals = np.random.rand(nObs)
-    walk_stdevs = np.random.rand(nObs) * .4
-    walk_means = np.random.randn(nObs) * .1 + .05  
-    random_data = np.random.randn(nObs, nSamp)
-    indices = range(nObs)
-    random_walk = np.array([random_data[i] * walk_stdevs[i] + walk_means[i] for i in indices])
-    time_series_data = np.cumsum(random_walk, axis=1)
-    return np.array([starting_vals[i] + time_series_data[i] for i in indices])
-    
 class RegressionExperimentTest(unittest.TestCase):
-
+    
+    def createTimeSeriesData(self, n1, n2):
+        return np.array([[x for x in RandomWalk(n=n2, walk_mean=np.random.randn()/10,
+                                                walk_stdev=np.random.randn()/10 )] 
+                         for unused in range(n1)])
+        
     def testNoExperimentDefaultVars(self, repeats=0):
         '''Test a regression experiment with default vars.'''
         exp = RegressionExperiment()
-        data_set = createTimeSeriesData(100,200)
-        val = exp.run(data_set, graph=False, repeats=repeats)
+        data_set = self.createTimeSeriesData(100,200)
+        val = exp.run(data_set, graph=False, disp=False, repeats=repeats)
         assert val * 0 == 0, 'Run did not return a number.'
 
     def testNoExperimentCustomVars(self, repeats=0):
         '''Test a regression experiment with custom vars.'''
         exp = RegressionExperiment()
-        data_set = createTimeSeriesData(100,200)
+        data_set = self.createTimeSeriesData(100,200)
         custom_vars = dict(
             {'output_fncs': [np.min],
+             'data_mapping': None,
              'seg:predictor_length': 10,
              'seg:predictee_length': 1,
              'seg:allowable_overlap': 1,
@@ -43,7 +40,7 @@ class RegressionExperimentTest(unittest.TestCase):
              'reg:constructor': SupportVectorRegressor,
              'reg:training_params': dict({'kernel_type': 1, 'degree': 2})
             })
-        val = exp.run(data_set, graph=False, static_variables=custom_vars, repeats=repeats)
+        val = exp.run(data_set, graph=False, disp=False, static_variables=custom_vars, repeats=repeats)
         assert type(val) == np.float64, 'Run did not return a number.'
         
     def testNoExperimentWithRepeats(self):
@@ -53,14 +50,14 @@ class RegressionExperimentTest(unittest.TestCase):
     def testOneDimExperiment(self, repeats=0):
         '''Test a one-dimensional regression experiment'''
         exp = RegressionExperiment()
-        data_set = createTimeSeriesData(100,200)
+        data_set = self.createTimeSeriesData(100,200)
         custom_vars = dict(
             {
              'seg:validation_split': .3,
              'fg:generators': [gens.identity,gens.maximum,gens.minimum],
             })
-        indep_vars = dict({ 'seg:allowable_overlap': range(9) })
-        val = exp.run(data_set, graph=False, 
+        indep_vars = dict({ 'seg:allowable_overlap': range(7,9) })
+        val = exp.run(data_set, graph=False, disp=False,
                       variables_under_test=indep_vars,
                       static_variables=custom_vars,
                       repeats=repeats)
@@ -75,15 +72,15 @@ class RegressionExperimentTest(unittest.TestCase):
     def testTwoDimExperiment(self, repeats=0):
         '''Test a two-dimensional regression experiment'''
         exp = RegressionExperiment()
-        data_set = createTimeSeriesData(100,200)
+        data_set = self.createTimeSeriesData(100,200)
         custom_vars = dict(
             {
              'seg:validation_split': .3,
              'fg:generators': [gens.identity,gens.maximum,gens.minimum],
             })
-        indep_vars = dict({ 'seg:allowable_overlap': range(3),
-                            'seg:predictor_length': [5,10,15,20] })
-        val = exp.run(data_set, graph=False, 
+        indep_vars = dict({ 'seg:allowable_overlap': range(1,3),
+                            'seg:predictor_length': [15,20] })
+        val = exp.run(data_set, graph=False, disp=False,
                       variables_under_test=indep_vars,
                       static_variables=custom_vars,
                       repeats=repeats)
@@ -95,7 +92,7 @@ class RegressionExperimentTest(unittest.TestCase):
         
     def testTwoDimExperimentWithRepeats(self):
         '''Run a two-dimensional experiment with repeats'''
-        self.testTwoDimExperiment(2)
+        self.testTwoDimExperiment(1)
         
 
 if __name__ == "__main__":

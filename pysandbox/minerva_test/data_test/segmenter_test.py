@@ -73,7 +73,7 @@ class TimeSeriesSegmenterTestCase(unittest.TestCase):
     def testNonAlignedMultiDimArray(self):
         '''Test the segmenter using a multidimensional unaligned array'''
         doubleRand = lambda n: np.random.rand(2, n)
-        data = np.array(map(doubleRand,(20,23,15)))
+        data = np.array(map(doubleRand,(20,23,15,25)))
         segment_parts = (3,2)
         train_data, valid_data = timeSeriesSegmenter(data, segment_parts, validation_split=.5)
         
@@ -95,7 +95,7 @@ class TimeSeriesSegmenterTestCase(unittest.TestCase):
         doubleRand = lambda n: np.random.rand(2, n)
         data = np.array(map(doubleRand,(20,23,15)))
         segment_parts = (3,3)
-        train_data, valid_data = timeSeriesSegmenter(data, segment_parts, segment_overlap=(1,))
+        train_data, valid_data = timeSeriesSegmenter(data, segment_parts, segment_overlap=(1,), validation_split=.5)
         
         assert len(valid_data) > 0, 'Validation Data shouldn\'t be empty'
         assert len(train_data) > 0, 'Training data shouldn\'t be empty'  

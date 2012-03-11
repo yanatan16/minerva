@@ -46,13 +46,13 @@ class TimeSeriesSegmentMasterGenerator(object):
 class TimeSeriesSegmentVectorGenerator(object):
     ''' Segment a vector of data (possibly a 2-dim data type vs time matrix) into data segments'''
     def __init__(self, vec, inc, starts, lengths):
-        self.vec = np.array(vec)
+        self.vec = np.array(np.array(vec).tolist())
         self.inc = inc
         self.segments = zip(starts, lengths)
         self.total = starts[-1] + lengths[-1]
         self.index = -self.inc
         
-        if type(vec[0]) == np.ndarray:
+        if type(vec[0]) == np.ndarray or type(vec[0]) == ListType:
             self.nsamps = len(vec[0])
             self.selectData = lambda start: [[vv[start+s:start+s+l] for vv in self.vec] for s, l in self.segments]
         else:
