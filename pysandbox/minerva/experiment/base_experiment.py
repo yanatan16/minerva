@@ -39,22 +39,40 @@ class BaseExperiment(object):
             print 'Running', ndim, 'experiment with', repeats, 'repeats.'
             
         if ndim == 0:
-            output = np.mean([runner() for unused in range(repeats+1)])
-            # Don't graph single output
-            if disp:
-                print output
+            try:
+                output = np.mean([runner() for unused in range(repeats+1)])
+                if disp:
+                    print output
+            except Exception as e:
+                print 'ERROR: Caught exception! ' + type(e) + ': ' + e
         elif ndim == 1:
             repeated_runner = lambda x: np.mean([runner(x) for unused in range(repeats+1)])
-            output = map(repeated_runner, experimental_values[0])
+            
+            output = np.empty(len(experimental_values[0]))
+            for i, v in enumerate(experimental_values[0]):
+                if disp:
+                    print 'Now running experiment ', i, ' with value ', v
+                try:
+                    output[i] = repeated_runner(v)
+                except Exception as e:
+                    print 'ERROR: Caught exception! ' + type(e) + ': ' + e 
             if graph:
                 self._graph(experimental_values[0], output)
             if disp:
                 self._disp(experimental_values, output)
         elif ndim == 2:
             repeated_runner = lambda x, y: np.mean([runner(x, y) for unused in range(repeats+1)])
-            output = [[repeated_runner(e1,e2) 
-                       for e1 in experimental_values[0]]
-                      for e2 in experimental_values[1]]
+            output = np.empty((len(experimental_values[1]),len(experimental_values[0])))
+            i = 0
+            for j, v1 in enumerate(experimental_values[0]):
+                for k, v2 in enumerate(experimental_values[1]):
+                    if disp:
+                        print 'Now running experiment ', i, ' with values ', v1, ' ', v2
+                        i += 1
+                try:
+                    output[k,j] = repeated_runner(v1,v2)
+                except Exception as e:
+                    print 'ERROR: Caught exception! ' + type(e) + ': ' + e
             if graph:
                 self._graph(experimental_values, output)
             if disp:

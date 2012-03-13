@@ -25,7 +25,7 @@ class BaseExperimentTest(unittest.TestCase):
         runner = lambda x: x**2 - x*10 + 1
         vals = exp.run(runner, values, graph=False, repeats=repeats)
         assert vals != None, 'Run did not return a value.'
-        assert type(vals) == list, 'Run did not return an list.'
+        assert type(vals) == np.ndarray, 'Run did not return an np.ndarray.'
         assert len(vals) == len(values[0]), 'Run did not return a list of proper length.'
         assert type(vals[0]) == np.float64, 'Run did not return a list of floats.'
         assert (vals == np.array(map(runner, values[0]))).all(), 'Run did not return the proper values.'
@@ -37,7 +37,7 @@ class BaseExperimentTest(unittest.TestCase):
         runner = lambda x, y: x**2-3*y**2+x*y-2*x+1.2
         vals = exp.run(runner, values, graph=False, repeats=repeats)
         assert vals != None, 'Run did not return a value.'
-        assert type(vals) == list, 'Run did not return an list.'
+        assert type(vals) == np.ndarray, 'Run did not return an np.ndarray.'
         assert np.shape(vals) == (len(values[0]), len(values[1])), 'Run did not return an array of proper shape.'
         assert type(vals[0][0]) == np.float64, 'Run did not return an array of floats.'
         assert ((vals - np.array([[runner(v1,v2) 

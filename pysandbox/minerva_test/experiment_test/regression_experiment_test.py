@@ -61,7 +61,7 @@ class RegressionExperimentTest(unittest.TestCase):
                       variables_under_test=indep_vars,
                       static_variables=custom_vars,
                       repeats=repeats)
-        assert type(val) == list, 'Run did not return a list.'
+        assert type(val) == np.ndarray, 'Run did not return a np.ndarray.'
         assert len(val) == len(indep_vars.values()[0]), 'Run did not return a correct length array.'
         assert type(val[0]) == np.float64, 'Run did not return a list of floats.'
         
@@ -84,7 +84,7 @@ class RegressionExperimentTest(unittest.TestCase):
                       variables_under_test=indep_vars,
                       static_variables=custom_vars,
                       repeats=repeats)
-        assert type(val) == list, 'Run did not return a list.'
+        assert type(val) == np.ndarray, 'Run did not return a np.ndarray.'
         assert np.shape(val) == (len(indep_vars.values()[0]), len(indep_vars.values()[1])) \
                 or np.shape(np.transpose(val)) == (len(indep_vars.values()[0]), len(indep_vars.values()[1])), \
                     'Run did not return a correct size array.'

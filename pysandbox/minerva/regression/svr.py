@@ -13,7 +13,10 @@ from regressor import SingleOutputExtensionRegressor, SingleOutputRegressor
 #############################
 
 #### Parameter translation
-base_parameters = dict({"svm_type": 4, "use_probability": 0})
+base_parameters = dict({"svm_type": 4, 
+                        "use_probability": 0, 
+                        'use_shrinking': 0,
+                        'quiet':''})
 parameter_translation = dict({
     "svm_type": "s", "kernel_type": "t", "degree": "d",
     "gamma": "g", "coef0": "r", "nu": "n", "epsilon": "p",

@@ -1,7 +1,7 @@
 from segmenter import timeSeriesSegmenter
 import ystockquote
-from quote_reader import QuoteReaderCsv, QuoteReaderPickle
-from quote_writer import QuoteWriterCsv, QuoteWriterPickle
+from quote_reader_writer_csv import QuoteReaderCsv, QuoteWriterCsv
+from quote_reader_writer_pickle import QuoteReaderPickle, QuoteWriterPickle
 from data_mapping import normalizeData, makeDataNormalizer 
 
 __all__ = ['timeSeriesSegmenter', 'ystockquote', 
