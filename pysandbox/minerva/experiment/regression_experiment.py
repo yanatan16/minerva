@@ -4,7 +4,7 @@ Created on Jan 6, 2012
 @author: Jon Eisen
 '''
 from base_experiment import BaseExperiment
-from minerva.data import makeDataNormalizer, timeSeriesSegmenter
+from minerva.data import DataNormalizer, timeSeriesSegmenter
 from minerva.regression import LinearRegressor
 from minerva.features import FeatureGenerator
 from minerva.features import generators as gens
@@ -23,12 +23,13 @@ class RegressionExperiment(BaseExperiment):
         # Functions on an array to predict (outputs of regression)
         'output_fncs':             [np.mean, np.std],
         
-        'data_mapping':            makeDataNormalizer(),
+        'data_mapping':            DataNormalizer(),
                                    
         'seg:predictor_length':    30,
         'seg:predictee_length':    5,
         'seg:allowable_overlap':   0,
         'seg:validation_split':    .25,
+        'seg:segment_overlap':     0,
         
         'fg:generators':            [gens.identity],
         'fg:generator_params':      dict(),

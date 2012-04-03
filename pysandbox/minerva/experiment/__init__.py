@@ -1,2 +1,3 @@
 from base_experiment import BaseExperiment
 from regression_experiment import RegressionExperiment
+from configuration_encoding import serializeConfiguration, deserializeConfiguration

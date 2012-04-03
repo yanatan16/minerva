@@ -69,10 +69,10 @@ class BaseExperiment(object):
                     if disp:
                         print 'Now running experiment ', i, ' with values ', v1, ' ', v2
                         i += 1
-                try:
-                    output[k,j] = repeated_runner(v1,v2)
-                except Exception as e:
-                    print 'ERROR: Caught exception! ' + type(e) + ': ' + e
+                    try:
+                        output[k,j] = repeated_runner(v1,v2)
+                    except Exception as e:
+                        print 'ERROR: Caught exception! ' + type(e) + ': ' + e
             if graph:
                 self._graph(experimental_values, output)
             if disp:

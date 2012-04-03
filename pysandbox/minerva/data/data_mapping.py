@@ -40,7 +40,13 @@ def normalizeData(data, ror_divisor_row=None, volume_row=None):
             return normalizeVolume(data)
         else:
             return rateOfReturn(data)
-        
-def makeDataNormalizer(ror_divisor_row=None, volume_row=None):
-    '''Make a function to normalize data'''
-    return lambda data: normalizeData(data, ror_divisor_row, volume_row)
+    
+class DataNormalizer(object):    
+    def __init__(self, ror_divisor_row=None, volume_row=None):
+        '''Make a function to normalize data'''
+        self.ror_row = ror_divisor_row
+        self.vol_row = volume_row
+    def __call__(self, data):
+        return normalizeData(data, self.ror_row, self.vol_row)
+    def __eq__(self, other):
+        return type(self) == type(other) and self.ror_row == other.ror_row and self.vol_row == other.vol_row

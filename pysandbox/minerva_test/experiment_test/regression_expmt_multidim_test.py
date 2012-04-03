@@ -8,7 +8,7 @@ import numpy as np
 from minerva.utility import RandomWalk
 from minerva.experiment import RegressionExperiment
 from types import IntType
-from minerva.data import makeDataNormalizer
+from minerva.data import DataNormalizer
 
 class RegressionExperimentMultidimTest(unittest.TestCase):
     def createTimeSeriesData(self, n1, n2, n3=None):
@@ -71,7 +71,7 @@ class RegressionExperimentMultidimTest(unittest.TestCase):
         '''Run a single experiment with multidimension data'''
         data = self.createTimeSeriesData(10, 3, [np.random.randint(100,1000) for unused in range(10)])
         custom_vars = dict({'output_fncs': [lambda ds: np.mean(ds[1])],
-                            'data_mapping': makeDataNormalizer(0, 2)})
+                            'data_mapping': DataNormalizer(0, 2)})
         exp = RegressionExperiment()
         val = exp.run(data, graph=False, disp=False, static_variables=custom_vars)
         assert type(val) == np.float64, 'Run did not return a number.'

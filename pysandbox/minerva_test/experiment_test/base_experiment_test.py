@@ -13,7 +13,7 @@ class BaseExperimentTest(unittest.TestCase):
         '''Testing a zero-dimensional experiment'''
         exp = BaseExperiment()
         runner = lambda: 87
-        val = exp.run(runner, None, graph=False)
+        val = exp.run(runner, None, graph=False, disp=False)
         assert val != None, 'Run did not return a value.'
         assert type(val) == np.float64, 'Run did not return a float.'
         assert val == runner(), 'Run did not return the proper value.'
@@ -23,7 +23,7 @@ class BaseExperimentTest(unittest.TestCase):
         exp = BaseExperiment()
         values = [range(10)]
         runner = lambda x: x**2 - x*10 + 1
-        vals = exp.run(runner, values, graph=False, repeats=repeats)
+        vals = exp.run(runner, values, graph=False, disp=False, repeats=repeats)
         assert vals != None, 'Run did not return a value.'
         assert type(vals) == np.ndarray, 'Run did not return an np.ndarray.'
         assert len(vals) == len(values[0]), 'Run did not return a list of proper length.'
@@ -35,7 +35,7 @@ class BaseExperimentTest(unittest.TestCase):
         exp = BaseExperiment()
         values = (np.arange(10.0, dtype=float), np.arange(10.0, dtype=float)) # Use floats
         runner = lambda x, y: x**2-3*y**2+x*y-2*x+1.2
-        vals = exp.run(runner, values, graph=False, repeats=repeats)
+        vals = exp.run(runner, values, graph=False, disp=False, repeats=repeats)
         assert vals != None, 'Run did not return a value.'
         assert type(vals) == np.ndarray, 'Run did not return an np.ndarray.'
         assert np.shape(vals) == (len(values[0]), len(values[1])), 'Run did not return an array of proper shape.'
@@ -48,7 +48,7 @@ class BaseExperimentTest(unittest.TestCase):
         '''Run the 0-dimension test with repeats'''
         exp = BaseExperiment()
         runner = lambda: np.random.randn()
-        val = exp.run(runner, None, graph=False, repeats=100)
+        val = exp.run(runner, None, graph=False, disp=False, repeats=100)
         assert val != None, 'Run did not return a value.'
         assert type(val) == np.float64, 'Run did not return a float.'
         assert np.abs(val) < 1, 'Run did not return the proper value.'

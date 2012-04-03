@@ -5,7 +5,7 @@ Created on Mar 9, 2012
 '''
 import unittest
 import numpy as np
-from minerva.data.data_mapping import rateOfReturn, normalizeVolume, normalizeData, makeDataNormalizer
+from minerva.data.data_mapping import rateOfReturn, normalizeVolume, normalizeData, DataNormalizer
 from minerva.utility import close_enough
 from itertools import izip
 
@@ -102,7 +102,7 @@ class DataMappingTest(unittest.TestCase):
     def testMakeNormalizeDataGenerator(self):
         '''Test the normalize data generator function'''
         data = np.random.rand(3,100)
-        simple_norm = makeDataNormalizer()
+        simple_norm = DataNormalizer()
         ndata = simple_norm(data)
         assert np.shape(ndata) == (3,99), 'Normalize Data gave incorrect shape'
         for nd, d in izip(ndata, data):
@@ -110,7 +110,7 @@ class DataMappingTest(unittest.TestCase):
                 'Normalize Data did not use Rate of Return function correctly'
         
         data = np.array(data.tolist() + np.random.randint(100,10000,(1,100)).tolist())
-        complex_norm = makeDataNormalizer(1, 3)
+        complex_norm = DataNormalizer(1, 3)
         ndata = complex_norm(data)
         assert np.shape(ndata) == (4,99), 'Normalize Data gave incorrect shape'
         for nd, d in izip(ndata[0:3], data[0:3]):

@@ -4,7 +4,7 @@ Created on Feb 19, 2012
 @author: jon
 '''
 from minerva.experiment import RegressionExperiment
-from minerva.data import QuoteReaderCsv, makeDataNormalizer
+from minerva.data import QuoteReaderCsv, DataNormalizer
 import numpy as np
 import minerva.features.generators as gens
 from minerva.regression import SupportVectorRegressor
@@ -20,7 +20,7 @@ nontestvars = dict({
                                       [gens.identity],
                                       [gens.identity,gens.maximum,gens.minimum]],
                     
-                    'data_mapping': makeDataNormalizer(ror_divisor_row=1, volume_row=4),
+                    'data_mapping': DataNormalizer(ror_divisor_row=1, volume_row=4),
                     'output_fncs': [lambda v: np.mean(v[1]), lambda v: np.std(v[1])],
                     'reg:constructor': SupportVectorRegressor,
                     'reg:training_params': dict({'use_shrinking': '0'})
